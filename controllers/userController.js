@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 
 const {createUser, getUserByEmail, getUserById, getQueryObject, updateUser} = require('../services/userService');
 const ApiFeatures = require('../utils/apiFeatures');
+const generateToken = require('../utils/generateToken');
+const verifyToken = require('../utils/verifyToken');
 
 async function createUserHandler(req, res, next) {
     const { name, email, password, steamId } = req.body;
@@ -23,14 +25,16 @@ async function createUserHandler(req, res, next) {
         steamId
     };
     
-    // TODO: generate token
+    const createdUser = await createUser(newUser);
 
-    await createUser(newUser)
+    const payload = {email: createdUser.email, id: createdUser.id, steamId: createdUser.steamId};
+    const token = await generateToken(payload);
+    
     res.status(201).json({
         status: 'success',
         data: {
             newUser,
-            token: null
+            token: token
         }
     });
 }
@@ -53,13 +57,16 @@ async function loginUserHandler(req, res, next) {
             message: 'Invalid credentials'
         });
     }
-    // TODO: generate token
+    const payload = {email: user.email, id: user.id, steamId: user.steamId};
+    const token = await generateToken(payload);
 
+    const verified = await verifyToken('Bearer ' + token)
     res.status(200).send({
         status:'success',
         data: {
             user,
-            token: null
+            token: token,
+            verified: verified
         }
     })
 }

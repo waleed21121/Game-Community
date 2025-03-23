@@ -6,6 +6,7 @@ function getQueryObject () {
 async function createUser(user) {
     const newUser = new userModel(user);
     await newUser.save();
+    return newUser;
 }
 
 async function getUserByEmail (email) {
