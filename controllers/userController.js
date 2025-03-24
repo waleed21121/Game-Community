@@ -87,6 +87,8 @@ async function getUserByIdHandler(req, res, next) {
 }
 
 async function getAllusersHandler(req, res, next) {
+    console.log(req.user);
+    
     console.log(req.query);
     
     const queryObject = getQueryObject();

@@ -1,8 +1,9 @@
 const userRouter = require('express').Router();
 
 const usersController = require('../controllers/userController');
+const JwtMiddleware = require('../middlewares/JWTMiddleware');
 
-userRouter.route('/').get(usersController.getAllusersHandler);
+userRouter.route('/').get(JwtMiddleware, usersController.getAllusersHandler);
 
 userRouter.route('/login').post(usersController.loginUserHandler);
 
