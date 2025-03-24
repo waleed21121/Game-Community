@@ -60,13 +60,11 @@ async function loginUserHandler(req, res, next) {
     const payload = {email: user.email, id: user.id, steamId: user.steamId};
     const token = await generateToken(payload);
 
-    const verified = await verifyToken('Bearer ' + token)
     res.status(200).send({
         status:'success',
         data: {
             user,
-            token: token,
-            verified: verified
+            token: token
         }
     })
 }
