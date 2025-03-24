@@ -4,6 +4,8 @@ const {getSteamURL} = require('../utils/getGameSteamURL');
 const {getProtonDbSummary} = require('../utils/getGameSummaryPDB');
 const {getUserSteamGames, getSteamGameById} = require('../services/steamGamesService');
 
+const {getUserById} = require('../services/userService')
+
 async function getAllGames (req, res, next) {
     const games = await gamesServices.getAllGames(req.query.name, req.query.limit, req.query.page);
     res.status(200).json({
@@ -56,9 +58,22 @@ async function steamGameById (req, res, next) {
     });
 }
 
+async function getUserGamesHandler (req, res, next) {
+    let games = await gamesServices.getUserGames(req.params.id);
+    const user = await getUserById(req.params.id);
+
+    if(user.steamId) {
+        const myGames = await getUserSteamGames(user.steamId);
+        games.push(...myGames);
+    }
+
+    console.log(games);
+}
+
 module.exports = {
     getAllGames,
     getGameById,
     getMySteamGames,
-    steamGameById
+    steamGameById,
+    getUserGamesHandler
 }

@@ -1,4 +1,6 @@
 const axios = require('axios');
+const {userGamesModel} = require('../models/index');
+
 require('dotenv').config({path: '.env'});
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -44,7 +46,13 @@ async function getGameById (id) {
     return response.data || [];
 }
 
+async function getUserGames(id) {
+    const userGames = await userGamesModel.find({userId: id});
+    return userGames;
+}
+
 module.exports = {
     getAllGames,
-    getGameById
+    getGameById,
+    getUserGames
 }

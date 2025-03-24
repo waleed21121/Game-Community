@@ -9,6 +9,11 @@ const userGamesSchema = mongoose.Schema({
     gameId: {
         type: Number,
         required: true
+    },
+    gameType: {
+        type: String,
+        required: true,
+        enum: ['Currently playing', 'Played', 'Plan To Play', 'Dropped', 'Completed', 'On Hold', 'Multiplayer']
     }
 });
 
