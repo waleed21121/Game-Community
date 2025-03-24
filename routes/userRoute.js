@@ -3,13 +3,15 @@ const userRouter = require('express').Router();
 const usersController = require('../controllers/userController');
 const JwtMiddleware = require('../middlewares/JWTMiddleware');
 
-userRouter.route('/').get(JwtMiddleware, usersController.getAllusersHandler);
+const errorMiddlewareHandler = require('../middlewares/errorHandlerMiddleware');
 
-userRouter.route('/login').post(usersController.loginUserHandler);
+userRouter.route('/').get(JwtMiddleware, errorMiddlewareHandler(usersController.getAllusersHandler));
 
-userRouter.route('/register').post(usersController.createUserHandler);
+userRouter.route('/login').post(errorMiddlewareHandler(usersController.loginUserHandler));
 
-userRouter.route('/:id').get(JwtMiddleware, usersController.getUserByIdHandler)
-    .patch(JwtMiddleware, usersController.updateUserHandler);
+userRouter.route('/register').post(errorMiddlewareHandler(usersController.createUserHandler));
+
+userRouter.route('/:id').get(JwtMiddleware, errorMiddlewareHandler(usersController.getUserByIdHandler))
+    .patch(JwtMiddleware, errorMiddlewareHandler(usersController.updateUserHandler));
 
 module.exports = userRouter;

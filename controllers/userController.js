@@ -3,18 +3,16 @@ const bcrypt = require('bcrypt');
 const {createUser, getUserByEmail, getUserById, getQueryObject, updateUser} = require('../services/userService');
 const ApiFeatures = require('../utils/apiFeatures');
 const generateToken = require('../utils/generateToken');
-const verifyToken = require('../utils/verifyToken');
+
+const ApiError = require('../utils/apiError');
 
 async function createUserHandler(req, res, next) {
     const { name, email, password, steamId } = req.body;
     
     const user = await getUserByEmail(email);
     if(user) {
-        // TODO: handle error
-        return res.status(400).json({
-            status: 'error',
-            message: 'User already exists'
-        });
+        const error = new ApiError().create(400, 'Bad request', 'User already exists');
+        throw error;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -43,11 +41,8 @@ async function loginUserHandler(req, res, next) {
     const { email, password } = req.body;
     const user = await getUserByEmail(email);
     if(!user) {
-        // TODO: handle error
-        return res.status(404).json({
-            status: 'error',
-            message: 'User not found'
-        });
+        const error = new ApiError().create(404, 'Not found', 'User not found');
+        throw error;
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) {
@@ -72,11 +67,8 @@ async function loginUserHandler(req, res, next) {
 async function getUserByIdHandler(req, res, next) {
     const user = await getUserById(req.params.id);
     if(!user) {
-        // TODO: handle error
-        return res.status(404).json({
-            status: 'error',
-            message: 'User not found'
-        });
+        const error = new ApiError().create(404, 'Not found', 'User not found');
+        throw error;
     }
     res.status(200).json({
         status:'success',
@@ -86,14 +78,15 @@ async function getUserByIdHandler(req, res, next) {
     })
 }
 
-async function getAllusersHandler(req, res, next) {
-    console.log(req.user);
-    
-    console.log(req.query);
-    
+async function getAllusersHandler(req, res, next) {    
     const queryObject = getQueryObject();
     const features = new ApiFeatures(queryObject, req.query).fieldsFilter().paginate().sort();
     const users = await features.queryObject;
+
+    if(users.length === 0) {
+        const error = new ApiError().create(404, 'Not found', 'No users found');
+        throw error;
+    }
 
     res.status(200).json({
         status:'success',
@@ -109,11 +102,8 @@ async function updateUserHandler(req, res, next) {
     const updates = {name, steamId};
     const updatedUser = await updateUser(id, updates);
     if(!updatedUser) {
-        // TODO: handle error
-        return res.status(404).json({
-            status: 'error',
-            message: 'User not found'
-        });
+        const error = new ApiError().create(404, 'Not found', 'User not found');
+        throw error;
     }
     res.status(200).json({
         status:'success',

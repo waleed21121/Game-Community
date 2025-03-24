@@ -15,12 +15,9 @@ app.use('/api/users', userRouter);
 
 app.use('/api/user-games', userGamesRouter);
 
-app.use((err, req, res, next) => {
-    res.status(err.status || 500).json({
-        error: {
-            message: err.message
-        }
-    });
-});
+app.use((error, req, res, next) => {
+    res.status(error.statusCode)
+    .json({status: error.statusText, error: error.message});
+})
 
 module.exports = app;
