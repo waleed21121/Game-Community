@@ -104,7 +104,7 @@ async function getAllusersHandler(req, res, next) {
 }
 
 async function updateUserHandler(req, res, next) {
-    const { id } = req.params;
+    const { id } = req.user;
     const {name, steamId} = req.body;
     const updates = {name, steamId};
     const updatedUser = await updateUser(id, updates);

@@ -9,7 +9,7 @@ userRouter.route('/login').post(usersController.loginUserHandler);
 
 userRouter.route('/register').post(usersController.createUserHandler);
 
-userRouter.route('/:id').get(usersController.getUserByIdHandler)
-    .patch(usersController.updateUserHandler);
+userRouter.route('/:id').get(JwtMiddleware, usersController.getUserByIdHandler)
+    .patch(JwtMiddleware, usersController.updateUserHandler);
 
 module.exports = userRouter;
