@@ -1,16 +1,18 @@
 const verifyToken = require('../utils/verifyToken');
-
+const ApiError = require('../utils/apiError');
 async function handler (req, res, next) {
-    const token = req.headers.authorization || req.headers.Authorization;
-    if (!token) {
-        // TODO: handle error
-        return res.status(401).json({
-            error: 'Unauthorized'
-        });
+    try {
+        const token = req.headers.authorization || req.headers.Authorization;
+        if (!token) {
+            const error = new ApiError().create(401, 'Unauthorized', 'Token is required');
+            next(error);
+        }
+        const payload = await verifyToken(token);
+        req.user = payload;
+        next();
+    } catch (error) {
+        next(error);
     }
-    const payload = await verifyToken(token);
-    req.user = payload;
-    next();
 }
 
 module.exports = handler;

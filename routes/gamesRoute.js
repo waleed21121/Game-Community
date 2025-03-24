@@ -1,12 +1,15 @@
 const gamesRouter = require('express').Router();
 const gamesController = require('../controllers/gamesController');
 
-gamesRouter.route('/').get(gamesController.getAllGames);
+const JwtMiddleware = require('../middlewares/JWTMiddleware');
+const errorHandlerMiddleware = require('../middlewares/errorHandlerMiddleware');
 
-gamesRouter.route('/:id').get(gamesController.getGameById);
+gamesRouter.route('/').get(errorHandlerMiddleware(gamesController.getAllGames));
 
-gamesRouter.route('/steam/userGames/:id').get(gamesController.getMySteamGames);
+gamesRouter.route('/:id').get(errorHandlerMiddleware(gamesController.getGameById));
 
-gamesRouter.route('/steam/game/:id').get(gamesController.steamGameById);
+gamesRouter.route('/steam/userGames/:id').get(JWTMiddleware, errorHandlerMiddleware(gamesController.getMySteamGames));
+
+gamesRouter.route('/steam/game/:id').get(JWTMiddleware, errorHandlerMiddleware(gamesController.steamGameById));
 
 module.exports = gamesRouter;
