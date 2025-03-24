@@ -15,7 +15,7 @@ async function verifyJWT (Utoken) {
         return payload;
 
     } catch (error) {
-        const err = new ApiError().create(401, 'Unauthorized', error.message);
+        const err = new ApiError().create(401, 'Unauthorized', 'Invalid token');
         throw err;
     }
 }

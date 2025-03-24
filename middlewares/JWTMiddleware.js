@@ -5,7 +5,7 @@ async function handler (req, res, next) {
         const token = req.headers.authorization || req.headers.Authorization;
         if (!token) {
             const error = new ApiError().create(401, 'Unauthorized', 'Token is required');
-            next(error);
+            return next(error);
         }
         const payload = await verifyToken(token);
         req.user = payload;

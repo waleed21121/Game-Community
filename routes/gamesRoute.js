@@ -8,8 +8,8 @@ gamesRouter.route('/').get(errorHandlerMiddleware(gamesController.getAllGames));
 
 gamesRouter.route('/:id').get(errorHandlerMiddleware(gamesController.getGameById));
 
-gamesRouter.route('/steam/userGames/:id').get(JWTMiddleware, errorHandlerMiddleware(gamesController.getMySteamGames));
+gamesRouter.route('/steam/userGames/:id').get(JwtMiddleware, errorHandlerMiddleware(gamesController.getMySteamGames));
 
-gamesRouter.route('/steam/game/:id').get(JWTMiddleware, errorHandlerMiddleware(gamesController.steamGameById));
+gamesRouter.route('/steam/game/:id').get(JwtMiddleware, errorHandlerMiddleware(gamesController.steamGameById));
 
 module.exports = gamesRouter;
