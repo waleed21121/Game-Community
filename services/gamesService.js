@@ -1,5 +1,4 @@
 const axios = require('axios');
-const {userGamesModel} = require('../models/index');
 
 require('dotenv').config({path: '.env'});
 
@@ -46,13 +45,7 @@ async function getGameById (id) {
     return response.data || [];
 }
 
-async function getUserGames(id) {
-    const userGames = await userGamesModel.find({userId: id});
-    return userGames;
-}
-
 module.exports = {
     getAllGames,
-    getGameById,
-    getUserGames
+    getGameById
 }

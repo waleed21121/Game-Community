@@ -4,7 +4,7 @@ const {getSteamURL} = require('../utils/getGameSteamURL');
 const {getProtonDbSummary} = require('../utils/getGameSummaryPDB');
 const {getUserSteamGames, getSteamGameById} = require('../services/steamGamesService');
 
-const {getUserById} = require('../services/userService');
+
 
 const ApiError = require('../utils/apiError');
 
@@ -48,22 +48,6 @@ async function getGameById (req, res, next) {
     });
 }
 
-async function getMySteamGames (req, res, next) {
-    const games = await getUserSteamGames(req.params.id, req.query.limit, req.query.page);
-
-    if(games.length === 0) {
-        const error = new ApiError().create(404, 'Not found', 'No games found');
-        throw error;
-    }
-
-    res.status(200).json({
-        status:'success',
-        data: {
-            games
-        }
-    });
-}
-
 async function steamGameById (req, res, next) {
     const games = await getSteamGameById(req.params.id);
 
@@ -80,32 +64,8 @@ async function steamGameById (req, res, next) {
     });
 }
 
-async function getUserGamesHandler (req, res, next) {
-    let games = await gamesServices.getUserGames(req.params.id);
-    const user = await getUserById(req.params.id);
-
-    if(user.steamId) {
-        const myGames = await getUserSteamGames(user.steamId);
-        games.push(...myGames);
-    }
-
-    if(games.length === 0) {
-        const error = new ApiError().create(404, 'Not found', 'No games found');
-        throw error;
-    }
-
-    res.status(200).json({
-        status:'success',
-        data: {
-            games
-        }
-    });
-}
-
 module.exports = {
     getAllGames,
     getGameById,
-    getMySteamGames,
-    steamGameById,
-    getUserGamesHandler
+    steamGameById
 }
