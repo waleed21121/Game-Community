@@ -1,7 +1,9 @@
 const {getUserById} = require('../services/userService');
-const {getQueryObject} = require('../services/userGamesService');
+const {getQueryObject, addNewGame, updateGameStatus, findUserGame, deleteUserGame} = require('../services/userGamesService');
 
 const {getUserSteamGames} = require('../services/steamGamesService');
+
+const {getGameById} = require('../services/gamesService')
 
 const ApiFeatures = require('../utils/apiFeatures');
 
@@ -55,8 +57,71 @@ async function getUserSteamGamesHandler (req, res, next) {
     });
 }
 
+async function addNewGameHandler(req, res, next) {
+    const game = await getGameById(req.params.gameId);
+    if(!game) {
+        const error = new ApiError().create(404, 'Not found', 'Game not found');
+        throw error;
+    }
+
+    const user = await getUserById(req.user.id);
+    if(!user) {
+        const error = new ApiError().create(404, 'Not found', 'User not found');
+        throw error;
+    }
+
+    const usergame = await findUserGame(req.user.id, req.params.gameId);
+
+    let newGame;
+
+    if(usergame) {
+        newGame = await updateGameStatus(req.user.id, req.params.gameId, req.query.status);
+    } else {
+        newGame = await addNewGame(req.user.id, req.params.gameId, req.query.status);
+    }
+
+    res.status(201).json({
+        status:'success',
+        data: {
+            newGame
+        }
+    });
+
+}
+
+async function updateGameStatusHandler (req, res, next) {
+    const usergame = await findUserGame(req.user.id, req.params.gameId);
+    if(!usergame) {
+        const error = new ApiError().create(404, 'Not found', 'User game not found');
+        throw error;
+    }
+    const updatedGame = await updateGameStatus(req.user.id, req.params.gameId, req.query.status);
+    res.status(200).json({
+        status:'success',
+        data: {
+            updatedGame
+        }
+    })
+}
+
+async function deleteUserGameHandler (req, res, next) {
+    const usergame = await findUserGame(req.user.id, req.params.gameId);
+    if(!usergame) {
+        const error = new ApiError().create(404, 'Not found', 'User game not found');
+        throw error;
+    }
+    await deleteUserGame(req.user.id, req.params.gameId);
+
+    res.status(204).json({
+        status:'success',
+        data: null
+    })
+}
 
 module.exports = {
     getUserGamesHandler,
-    getUserSteamGamesHandler
+    getUserSteamGamesHandler,
+    addNewGameHandler,
+    updateGameStatusHandler,
+    deleteUserGameHandler
 };

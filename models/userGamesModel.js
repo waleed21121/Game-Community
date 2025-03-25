@@ -10,7 +10,7 @@ const userGamesSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    gameType: {
+    status: {
         type: String,
         required: true,
         enum: ['Currently playing', 'Played', 'Plan To Play', 'Dropped', 'Completed', 'On Hold', 'Multiplayer']
