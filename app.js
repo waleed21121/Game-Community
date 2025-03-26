@@ -3,6 +3,7 @@ const gamesRouter = require('./routes/gamesRoute');
 const userRouter = require('./routes/userRoute');
 const userGamesRouter = require('./routes/userGamesRoute');
 const gameReviewsRouter = require('./routes/gameReviewsRoute');
+const favoriteGamesRouter = require('./routes/favoriteGamesRoute');
 
 require('dotenv').config({path: '.env'});
 
@@ -17,6 +18,8 @@ app.use('/api/users', userRouter);
 app.use('/api/user-games', userGamesRouter);
 
 app.use('/api/game-reviews', gameReviewsRouter);
+
+app.use('/api/favorite-games', favoriteGamesRouter);
 
 app.use((error, req, res, next) => {
     res.status(error.statusCode)
