@@ -6,8 +6,10 @@ const JwtMiddleware = require('../middlewares/JWTMiddleware');
 
 const favoriteGamesController = require('../controllers/favoritegamesController');
 
-favoriteGamesRouter.route('/:id').get(JwtMiddleware, errorHandlerMiddleware(favoriteGamesController.getUserFavoriteGamesHandler))
-    .post(JwtMiddleware, errorHandlerMiddleware(favoriteGamesController.addUserFavoriteGameHandler))
-    .delete(JwtMiddleware, errorHandlerMiddleware(favoriteGamesController.removeUserFavoriteGameHandler));
+const idValidatorMiddleware = require('../middlewares/idValidator');
+
+favoriteGamesRouter.route('/:id').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.getUserFavoriteGamesHandler))
+    .post(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.addUserFavoriteGameHandler))
+    .delete(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.removeUserFavoriteGameHandler));
 
 module.exports = favoriteGamesRouter;

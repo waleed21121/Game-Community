@@ -5,12 +5,13 @@ const JwtMiddleware = require('../middlewares/JWTMiddleware');
 
 const userGamesController = require('../controllers/userGamesController');
 
-userGamesRouter.route('/:id').get(JwtMiddleware, errorHandlerMiddlware(userGamesController.getUserGamesHandler));
+const idValidatorMiddleware = require('../middlewares/idValidator');
 
-userGamesRouter.route('/:id/steam-games').get(JwtMiddleware, errorHandlerMiddlware(userGamesController.getUserSteamGamesHandler))
+userGamesRouter.route('/:id').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.getUserGamesHandler))
+    .post(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.addNewGameHandler))
+    .patch(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.updateGameStatusHandler))
+    .delete(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.deleteUserGameHandler));
 
-// TODO: get user specific game all details including review
-userGamesRouter.route('/games/:gameId').post(JwtMiddleware, errorHandlerMiddlware(userGamesController.addNewGameHandler))
-    .patch(JwtMiddleware, errorHandlerMiddlware(userGamesController.updateGameStatusHandler))
-    .delete(JwtMiddleware, errorHandlerMiddlware(userGamesController.deleteUserGameHandler));
+userGamesRouter.route('/:id/steam-games').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.getUserSteamGamesHandler))
+
 module.exports = userGamesRouter;
