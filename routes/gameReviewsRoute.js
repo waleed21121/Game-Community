@@ -7,10 +7,13 @@ const gameReviewsController = require('../controllers/gameReviewsController');
 
 const idValidatorMiddleware = require('../middlewares/idValidator');
 
-gameReviewsRouter.route('/:gameId').get(JwtMiddleware, errorHandlerMiddlware(gameReviewsController.getGameReviewsHandler))
-    .post(JwtMiddleware, errorHandlerMiddlware(gameReviewsController.postGameReviewHandler));
+const validationResultMiddleware = require('../middlewares/validationResults');
+const gameReviewValidator = require('../validators/gameReviewsValidators');
 
-gameReviewsRouter.route('/:gameId/:reviewId').patch(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(gameReviewsController.updateGameReviewHandler))
+gameReviewsRouter.route('/:gameId').get(JwtMiddleware, errorHandlerMiddlware(gameReviewsController.getGameReviewsHandler))
+    .post(JwtMiddleware, gameReviewValidator, validationResultMiddleware, errorHandlerMiddlware(gameReviewsController.postGameReviewHandler));
+
+gameReviewsRouter.route('/:gameId/:reviewId').patch(JwtMiddleware, idValidatorMiddleware, gameReviewValidator, validationResultMiddleware, errorHandlerMiddlware(gameReviewsController.updateGameReviewHandler))
     .delete(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(gameReviewsController.deleteGameReviewHandler));
 
 module.exports = gameReviewsRouter;
