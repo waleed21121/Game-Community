@@ -41,7 +41,8 @@ async function addUserFavoriteGameHandler (req, res, next) {
 
     const { gameId } = req.body;
     const game = await getGameById(gameId);
-    if(!game) {
+
+    if(game.length === 0) {
         const error = new ApiError().create(404, 'Not found', 'Game not found');
         throw error;
     }
