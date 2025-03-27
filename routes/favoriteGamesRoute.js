@@ -8,8 +8,11 @@ const favoriteGamesController = require('../controllers/favoritegamesController'
 
 const idValidatorMiddleware = require('../middlewares/idValidator');
 
-favoriteGamesRouter.route('/:id').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.getUserFavoriteGamesHandler))
-    .post(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.addUserFavoriteGameHandler))
-    .delete(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddleware(favoriteGamesController.removeUserFavoriteGameHandler));
+const validationResultMiddleware = require('../middlewares/validationResults');
+const favoriteGamesValidators = require('../validators/favoriteGamesValidators');
+
+favoriteGamesRouter.route('/:id').get(JwtMiddleware, validationResultMiddleware, errorHandlerMiddleware(favoriteGamesController.getUserFavoriteGamesHandler))
+    .post(JwtMiddleware, idValidatorMiddleware, favoriteGamesValidators, validationResultMiddleware, errorHandlerMiddleware(favoriteGamesController.addUserFavoriteGameHandler))
+    .delete(JwtMiddleware, idValidatorMiddleware, favoriteGamesValidators, validationResultMiddleware, errorHandlerMiddleware(favoriteGamesController.removeUserFavoriteGameHandler));
 
 module.exports = favoriteGamesRouter;
