@@ -7,10 +7,13 @@ const userGamesController = require('../controllers/userGamesController');
 
 const idValidatorMiddleware = require('../middlewares/idValidator');
 
+const validationResultMiddleware = require('../middlewares/validationResults');
+const userGameValidators = require('../validators/userGamesValidators');
+
 userGamesRouter.route('/:id').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.getUserGamesHandler))
-    .post(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.addNewGameHandler))
-    .patch(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.updateGameStatusHandler))
-    .delete(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.deleteUserGameHandler));
+    .post(JwtMiddleware, idValidatorMiddleware, userGameValidators, validationResultMiddleware, errorHandlerMiddlware(userGamesController.addNewGameHandler))
+    .patch(JwtMiddleware, idValidatorMiddleware, userGameValidators, validationResultMiddleware, errorHandlerMiddlware(userGamesController.updateGameStatusHandler))
+    .delete(JwtMiddleware, idValidatorMiddleware, userGameValidators, validationResultMiddleware, errorHandlerMiddlware(userGamesController.deleteUserGameHandler));
 
 userGamesRouter.route('/:id/steam-games').get(JwtMiddleware, idValidatorMiddleware, errorHandlerMiddlware(userGamesController.getUserSteamGamesHandler))
 

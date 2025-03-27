@@ -7,13 +7,16 @@ const errorMiddlewareHandler = require('../middlewares/errorHandlerMiddleware');
 
 const idValidationMiddleware = require('../middlewares/idValidator');
 
+const validationResultMiddleware = require('../middlewares/validationResults');
+const {registerValidators, loginValidators, updatedUserValidators} = require('../validators/userValidators');
+
 userRouter.route('/').get(JwtMiddleware, errorMiddlewareHandler(usersController.getAllusersHandler));
 
-userRouter.route('/login').post(errorMiddlewareHandler(usersController.loginUserHandler));
+userRouter.route('/login').post(loginValidators, validationResultMiddleware, errorMiddlewareHandler(usersController.loginUserHandler));
 
-userRouter.route('/register').post(errorMiddlewareHandler(usersController.createUserHandler));
+userRouter.route('/register').post(registerValidators, validationResultMiddleware, errorMiddlewareHandler(usersController.createUserHandler));
 
 userRouter.route('/:id').get(JwtMiddleware, idValidationMiddleware, errorMiddlewareHandler(usersController.getUserByIdHandler))
-    .patch(JwtMiddleware, idValidationMiddleware, errorMiddlewareHandler(usersController.updateUserHandler));
+    .patch(JwtMiddleware, idValidationMiddleware, updatedUserValidators, validationResultMiddleware, errorMiddlewareHandler(usersController.updateUserHandler));
 
 module.exports = userRouter;
