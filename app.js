@@ -5,11 +5,15 @@ const userGamesRouter = require('./routes/userGamesRoute');
 const gameReviewsRouter = require('./routes/gameReviewsRoute');
 const favoriteGamesRouter = require('./routes/favoriteGamesRoute');
 
+const rateLimitingMiddleware = require('./utils/rateLimiter');
+
 require('dotenv').config({path: '.env'});
 
 const app = express();
 
 app.use(express.json());
+
+app.use(rateLimitingMiddleware);
 
 app.use('/api/games', gamesRouter)
 
