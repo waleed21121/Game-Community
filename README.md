@@ -22,13 +22,14 @@ Game Community API is a backend service designed for gamers. It allows users to 
 - **bcrypt** – Hashing passwords for authentication
 - **jsonwebtoken** – Generating and verifying JWTs for authentication
 - **express-validator** – Middleware for request validation
+- **express-rate-limit** – Rate limiting to prevent abuse and limit repeated requests
 - **nodemon** – Automatically restarts the server during development
 - **dotenv** – Manages environment variables
 
 ## Third-Party API Integrations
 - **IGDB** – Fetch game details
 - **Steam Powered API** – Retrieve Steam game details and user libraries
-- **ProtonDB** – Verify game details.
+- **ProtonDB** – Verify game details
 
 ## Installation
 
@@ -103,10 +104,11 @@ PRIVATE_KEY=your_private_key
   - All APIs support pagination, sorting, and filtering through query parameters.
 - **Authentication & Authorization**
   - All endpoints (except login, register, and public game data) require a JWT token for access.
+- **Rate Limiting**
+  - Protects the API from excessive requests using `express-rate-limit`
 
 ## License
 This project is licensed under the MIT License.
 
 ## Author
 [Waleed21121](https://github.com/waleed21121)
-
