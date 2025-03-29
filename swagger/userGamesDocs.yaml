@@ -1,0 +1,251 @@
+tags:
+  - name: User Games
+    description: API endpoints to manage games associated with users
+
+paths:
+  /api/user-games/{id}:
+    get:
+      summary: Get a user's games
+      tags: [User Games]
+      description: Retrieve all games associated with a specific user by their MongoDB user ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      responses:
+        "200":
+          description: A list of games for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    gameId:
+                      type: integer
+                    title:
+                      type: string
+                    status:
+                      type: string
+        "400":
+          description: Invalid user ID
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+    post:
+      summary: Add a new game for a user
+      tags: [User Games]
+      description: Add a new game to a user's collection by their MongoDB user ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: integer
+                  description: The ID of the game to add (must be a number)
+                status:
+                  type: string
+                  enum:
+                    - "Currently playing"
+                    - "Played"
+                    - "Plan To Play"
+                    - "Dropped"
+                    - "Completed"
+                    - "On Hold"
+                    - "Multiplayer"
+                  description: The status of the game (must be one of the specified values)
+              required:
+                - gameId
+                - status
+            example:
+              gameId: 12345
+              status: "Currently playing"
+      responses:
+        "201":
+          description: Game successfully added to user's collection
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: integer
+                  status:
+                    type: string
+        "400":
+          description: Invalid user ID or invalid request body (e.g., gameId must be a number, status must be valid)
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+    patch:
+      summary: Update a game's status for a user
+      tags: [User Games]
+      description: Update the status of a specific game in a user's collection by their MongoDB user ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: integer
+                  description: The ID of the game to update (must be a number)
+                status:
+                  type: string
+                  enum:
+                    - "Currently playing"
+                    - "Played"
+                    - "Plan To Play"
+                    - "Dropped"
+                    - "Completed"
+                    - "On Hold"
+                    - "Multiplayer"
+                  description: The new status of the game (must be one of the specified values)
+              required:
+                - gameId
+                - status
+            example:
+              gameId: 12345
+              status: "Completed"
+      responses:
+        "200":
+          description: Game status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: integer
+                  status:
+                    type: string
+        "400":
+          description: Invalid user ID or invalid request body (e.g., gameId must be a number, status must be valid)
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User or game not found
+        "500":
+          description: Internal server error
+
+    delete:
+      summary: Delete a game from a user's collection
+      tags: [User Games]
+      description: Remove a specific game from a user's collection by their MongoDB user ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: integer
+                  description: The ID of the game to delete (must be a number)
+              required:
+                - gameId
+            example:
+              gameId: 12345
+      responses:
+        "204":
+          description: Game successfully deleted from user's collection
+        "400":
+          description: Invalid user ID or invalid request body (e.g., gameId must be a number)
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User or game not found
+        "500":
+          description: Internal server error
+
+  /api/user-games/{id}/steam-games:
+    get:
+      summary: Get a user's Steam games
+      tags: [User Games]
+      description: Retrieve all Steam games associated with a specific user by their MongoDB user ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      responses:
+        "200":
+          description: A list of Steam games for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    gameId:
+                      type: integer
+                    title:
+                      type: string
+                    steamData:
+                      type: object
+                      description: Additional Steam-specific data
+        "400":
+          description: Invalid user ID
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

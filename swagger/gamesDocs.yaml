@@ -1,0 +1,110 @@
+# Tags definition for Games
+tags:
+  - name: Games
+    description: API endpoints to manage games in the Games Community
+
+# Route: GET /games
+/api/games:
+  get:
+    summary: Get all games
+    tags: [Games]
+    description: Retrieve a list of all games available in the database.
+    responses:
+      "200":
+        description: A list of all games
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  genre:
+                    type: string
+      "500":
+        description: Internal server error
+
+# Route: GET /games/{id}
+/api/games/{id}:
+  get:
+    summary: Get a game by ID
+    tags: [Games]
+    description: Retrieve a specific game by its ID.
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The ID of the game to retrieve
+    responses:
+      "200":
+        description: Details of the requested game
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                genre:
+                  type: string
+      "400":
+        description: Invalid ID provided
+      "404":
+        description: Game not found
+      "500":
+        description: Internal server error
+
+# Route: GET /games/steam/game/{id}
+/api/games/steam/game/{id}:
+  get:
+    summary: Get a Steam game by ID
+    tags: [Games]
+    description: Retrieve a specific Steam game by its ID. Requires JWT authentication.
+    security:
+      - bearerAuth: []  # Indicates JWT authentication is required
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The Steam ID of the game to retrieve
+    responses:
+      "200":
+        description: Details of the requested Steam game
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                steamData:
+                  type: object
+                  description: Additional Steam-specific data
+      "400":
+        description: Invalid ID provided
+      "401":
+        description: Unauthorized - Missing or invalid JWT
+      "404":
+        description: Steam game not found
+      "500":
+        description: Internal server error
+
+# Security scheme definition for JWT (if not already defined elsewhere)
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

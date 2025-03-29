@@ -1,4 +1,6 @@
 const express = require('express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swageerUI = require('swagger-ui-express');
 const gamesRouter = require('./routes/gamesRoute');
 const userRouter = require('./routes/userRoute');
 const userGamesRouter = require('./routes/userGamesRoute');
@@ -12,6 +14,11 @@ require('dotenv').config({path: '.env'});
 const app = express();
 
 app.use(express.json());
+
+// API documentation
+const options = require('./swagger/swaggerOptions');
+const specs = swaggerJSDoc(options);
+app.use('/api-docs', swageerUI.serve, swageerUI.setup(specs));
 
 app.use(rateLimitingMiddleware);
 

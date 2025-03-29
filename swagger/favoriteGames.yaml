@@ -1,0 +1,139 @@
+tags:
+  - name: Favorite Games
+    description: API endpoints to manage users' favorite games
+
+paths:
+  /api/favorite-games/{id}:
+    get:
+      summary: Get a user's favorite games
+      tags: [Favorite Games]
+      description: Retrieve the list of favorite games for a specific user by their ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      responses:
+        "200":
+          description: A list of the user's favorite games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    gameId:
+                      type: string
+                    title:
+                      type: string
+        "400":
+          description: Invalid user ID
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User not found
+        "500":
+          description: Internal server error
+
+    post:
+      summary: Add a game to a user's favorites
+      tags: [Favorite Games]
+      description: Add a game to a user's favorite games list by their ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: string
+                  minLength: 1
+                  description: The ID of the game to add to favorites (must be non-empty)
+              required:
+                - gameId
+            example:
+              gameId: "507f1f77bcf86cd799439011"
+      responses:
+        "201":
+          description: Game successfully added to user's favorites
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: string
+                  title:
+                    type: string
+        "400":
+          description: Invalid user ID or invalid request body (e.g., missing or invalid gameId)
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User or game not found
+        "409":
+          description: Game already in user's favorites
+        "500":
+          description: Internal server error
+
+    delete:
+      summary: Remove a game from a user's favorites
+      tags: [Favorite Games]
+      description: Remove a game from a user's favorite games list by their ID. Requires JWT authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: The MongoDB user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: string
+                  minLength: 1
+                  description: The ID of the game to remove from favorites (must be non-empty)
+              required:
+                - gameId
+            example:
+              gameId: "507f1f77bcf86cd799439011"
+      responses:
+        "204":
+          description: Game successfully removed from user's favorites
+        "400":
+          description: Invalid user ID or invalid request body (e.g., missing or invalid gameId)
+        "401":
+          description: Unauthorized - Missing or invalid JWT
+        "404":
+          description: User or game not found in favorites
+        "500":
+          description: Internal server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
